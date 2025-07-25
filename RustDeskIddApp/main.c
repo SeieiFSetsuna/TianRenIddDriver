@@ -1,4 +1,3 @@
-system("chcp 65001"); // 更改控制台为UTF-8编码
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
@@ -28,6 +27,7 @@ system("chcp 65001"); // 更改控制台为UTF-8编码
 
 int prompt_input()
 {
+    system("chcp 65001"); // 更改控制台为UTF-8编码
     printf("按键                  执行：\n");
     printf("       1. 'q'               1. 退出\n");
     printf("       2. 'c'               2. 创建具有生命周期\"SWDeviceLifetimeHandle\"的VD驱动\n");
