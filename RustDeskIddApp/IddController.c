@@ -75,7 +75,7 @@ const char* GetLastMsg()
 
 BOOL InstallUpdate(LPCTSTR fullInfPath, PBOOL rebootRequired)
 {
-    SetLastMsg("Success");
+    SetLastMsg("成功");
 
     // UpdateDriverForPlugAndPlayDevices may return FALSE while driver was successfully installed...
     if (FALSE == UpdateDriverForPlugAndPlayDevices(
@@ -95,13 +95,13 @@ BOOL InstallUpdate(LPCTSTR fullInfPath, PBOOL rebootRequired)
             switch (error)
             {
             case 0x109:
-                SetLastMsg("Failed InstallUpdate UpdateDriverForPlugAndPlayDevicesW, error: 0x%x, %s  Please try: Install the cert.\n", error, errorString == NULL ? "(NULL)\n" : errorString);
+                SetLastMsg("无法安装更新 UpdateDriverForPlugAndPlayDevicesW，错误：0x%x, %s  请尝试：安装证书。\n", error, errorString == NULL ? "(NULL)\n" : errorString);
                 break;
             case 0xe0000247:
-                SetLastMsg("Failed InstallUpdate UpdateDriverForPlugAndPlayDevicesW, error: 0x%x, %s  Please try: \n1. Check the device manager and event viewer.\n2. Uninstall the driver, install the cert, then try again.\n", error, errorString == NULL ? "(NULL)\n" : errorString);
+                SetLastMsg("无法安装更新 UpdateDriverForPlugAndPlayDevicesW，错误：0x%x, %s  请尝试：\n1. 检查设备管理器和事件查看器。\n2. 卸载驱动程序，安装证书，然后重试。\n", error, errorString == NULL ? "(NULL)\n" : errorString);
                 break;
             default:
-                SetLastMsg("Failed InstallUpdate UpdateDriverForPlugAndPlayDevicesW, error: 0x%x, %s  Please try: Check the device manager and event viewer.\n", error, errorString == NULL ? "(NULL)\n" : errorString);
+                SetLastMsg("无法安装更新 UpdateDriverForPlugAndPlayDevicesW，错误：0x%x, %s  请尝试：检查设备管理器和事件查看器。\n", error, errorString == NULL ? "(NULL)\n" : errorString);
                 break;
             }
             if (errorString != NULL)
@@ -121,7 +121,7 @@ BOOL InstallUpdate(LPCTSTR fullInfPath, PBOOL rebootRequired)
 
 BOOL Uninstall(LPCTSTR fullInfPath, PBOOL rebootRequired)
 {
-    SetLastMsg("Success");
+    SetLastMsg("成功");
 
     if (FALSE == DiUninstallDriver(
         NULL,
@@ -134,7 +134,7 @@ BOOL Uninstall(LPCTSTR fullInfPath, PBOOL rebootRequired)
         if (error != 0)
         {
             LPSTR errorString = formatErrorString(error);
-            SetLastMsg("Failed Uninstall DiUninstallDriverW, error: 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
+            SetLastMsg("卸载 DiUninstallDriverW 失败，错误：0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
             if (errorString != NULL)
             {
                 LocalFree(errorString);
@@ -152,7 +152,7 @@ BOOL Uninstall(LPCTSTR fullInfPath, PBOOL rebootRequired)
 
 BOOL IsDeviceCreated(PBOOL created)
 {
-    SetLastMsg("Success");
+    SetLastMsg("成功");
 
     HDEVINFO hardwareDeviceInfo = SetupDiGetClassDevs(
         &GUID_DEVINTERFACE_IDD_DRIVER_DEVICE,
@@ -164,7 +164,7 @@ BOOL IsDeviceCreated(PBOOL created)
     {
         DWORD error = GetLastError();
         LPSTR errorString = formatErrorString(error);
-        SetLastMsg("Idd device: Failed IsDeviceCreated SetupDiGetClassDevs, error 0x%x (%s)\n", error, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("Idd驱动：IsDeviceCreated SetupDiGetClassDevs 失败，错误 0x%x (%s)\n", error, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -202,7 +202,7 @@ BOOL IsDeviceCreated(PBOOL created)
         }
 
         LPSTR errorString = formatErrorString(error);
-        SetLastMsg("Idd device: Failed IsDeviceCreated SetupDiEnumDeviceInterfaces, error: 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("Idd驱动：IsDeviceCreated SetupDiEnumDeviceInterfaces 失败，错误 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -228,11 +228,11 @@ BOOL DeviceCreate(PHSWDEVICE hSwDevice)
 
 BOOL DeviceCreateWithLifetime(SW_DEVICE_LIFETIME *lifetime, PHSWDEVICE hSwDevice)
 {
-    SetLastMsg("Success");
+    SetLastMsg("成功");
 
     if (*hSwDevice != NULL)
     {
-        SetLastMsg("Device handle is not NULL\n");
+        SetLastMsg("设备句柄不为NULL\n");
         return FALSE;
     }
 
@@ -250,7 +250,7 @@ BOOL DeviceCreateWithLifetime(SW_DEVICE_LIFETIME *lifetime, PHSWDEVICE hSwDevice
     {
         DWORD error = GetLastError();
         LPSTR errorString = formatErrorString(error);
-        SetLastMsg("Failed DeviceCreate CreateEvent, error: 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("DeviceCreate CreateEvent 失败，错误： 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -295,7 +295,7 @@ BOOL DeviceCreateWithLifetime(SW_DEVICE_LIFETIME *lifetime, PHSWDEVICE hSwDevice
     if (FAILED(hr))
     {
         LPSTR errorString = formatErrorString((DWORD)hr);
-        SetLastMsg("Failed DeviceCreate SwDeviceCreate, hresult 0x%lx, %s", hr, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("DeviceCreate SwDeviceCreate 失败，hresult 0x%lx, %s", hr, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -309,7 +309,7 @@ BOOL DeviceCreateWithLifetime(SW_DEVICE_LIFETIME *lifetime, PHSWDEVICE hSwDevice
     }
 
     // Wait for callback to signal that the device has been created
-    printf("Waiting for device to be created....\n");
+    printf("正在等待创建设备....\n");
     DWORD waitResult = WaitForSingleObject(hEvent, 10 * 1000);
     CloseHandle(hEvent);
     if (waitResult != WAIT_OBJECT_0)
@@ -319,17 +319,17 @@ BOOL DeviceCreateWithLifetime(SW_DEVICE_LIFETIME *lifetime, PHSWDEVICE hSwDevice
         switch (waitResult)
         {
             case WAIT_ABANDONED:
-                SetLastMsg("Failed DeviceCreate wait for device creation 0x%d, WAIT_ABANDONED\n", waitResult);
+                SetLastMsg("DeviceCreate 失败，等待设备创建 0x%d, WAIT_ABANDONED\n", waitResult);
                 break;
             case WAIT_TIMEOUT:
-                SetLastMsg("Failed DeviceCreate wait for device creation 0x%d, WAIT_TIMEOUT\n", waitResult);
+                SetLastMsg("DeviceCreate 失败，等待设备创建 0x%d, WAIT_TIMEOUT\n", waitResult);
                 break;
             default:
                 error = GetLastError();
                 if (error != 0)
                 {
                     errorString = formatErrorString(error);
-                    SetLastMsg("Failed DeviceCreate wait for device creation, error: 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
+                    SetLastMsg("DeviceCreate 失败，等待设备创建，错误：0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
                     if (errorString != NULL)
                     {
                         LocalFree(errorString);
@@ -352,7 +352,7 @@ BOOL DeviceCreateWithLifetime(SW_DEVICE_LIFETIME *lifetime, PHSWDEVICE hSwDevice
     else
     {
         LPSTR errorString = formatErrorString((DWORD)callbackContext.hrCreateResult);
-        SetLastMsg("Failed DeviceCreate SwDeviceCreate, hrCreateResult 0x%lx, %s", callbackContext.hrCreateResult, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("DeviceCreate SwDeviceCreate 失败，hrCreateResult 0x%lx, %s", callbackContext.hrCreateResult, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -363,7 +363,7 @@ BOOL DeviceCreateWithLifetime(SW_DEVICE_LIFETIME *lifetime, PHSWDEVICE hSwDevice
 
 VOID DeviceClose(HSWDEVICE hSwDevice)
 {
-    SetLastMsg("Success");
+    SetLastMsg("成功");
 
     if (hSwDevice != INVALID_HANDLE_VALUE && hSwDevice != NULL)
     {
@@ -403,11 +403,11 @@ VOID DeviceClose(HSWDEVICE hSwDevice)
 
 BOOL MonitorPlugIn(UINT index, UINT edid, INT retries)
 {
-    SetLastMsg("Success");
+    SetLastMsg("成功");
 
     if (retries < 0)
     {
-        SetLastMsg("Failed MonitorPlugIn invalid tries %d\n", retries);
+        SetLastMsg("失败的 MonitorPlugIn 无效尝试 %d\n", retries);
         if (g_printMsg)
         {
             printf(g_lastMsg);
@@ -439,7 +439,7 @@ BOOL MonitorPlugIn(UINT index, UINT edid, INT retries)
     if (!SUCCEEDED(hr))
     {
         LPSTR errorString = formatErrorString((DWORD)hr);
-        SetLastMsg("Failed MonitorPlugIn CoCreateGuid, hresult 0x%lx, %s", hr, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("MonitorPlugIn CoCreateGuid 失败，hresult 0x%lx, %s", hr, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -473,7 +473,7 @@ BOOL MonitorPlugIn(UINT index, UINT edid, INT retries)
         {
             DWORD error = GetLastError();
             LPSTR errorString = formatErrorString(error);
-            SetLastMsg("Failed MonitorPlugIn DeviceIoControl, error: 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
+            SetLastMsg("MonitorPlugIn DeviceIoControl 失败，错误：0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
             if (errorString != NULL)
             {
                 LocalFree(errorString);
@@ -491,7 +491,7 @@ BOOL MonitorPlugIn(UINT index, UINT edid, INT retries)
 
 BOOL MonitorPlugOut(UINT index)
 {
-    SetLastMsg("Success");
+    SetLastMsg("成功");
 
     HANDLE hDevice = DeviceOpenHandle();
     if (hDevice == INVALID_HANDLE_VALUE || hDevice == NULL)
@@ -515,7 +515,7 @@ BOOL MonitorPlugOut(UINT index)
     {
         DWORD error = GetLastError();
         LPSTR errorString = formatErrorString(error);
-        SetLastMsg("Failed MonitorPlugOut DeviceIoControl, error: 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("MonitorPlugOut DeviceIoControl 失败，错误：0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -537,7 +537,7 @@ BOOL MonitorPlugOut(UINT index)
 
 BOOL MonitorModesUpdate(UINT index, UINT modeCount, PMonitorMode modes)
 {
-    SetLastMsg("Success");
+    SetLastMsg("成功");
 
     HANDLE hDevice = DeviceOpenHandle();
     if (hDevice == INVALID_HANDLE_VALUE || hDevice == NULL)
@@ -551,7 +551,7 @@ BOOL MonitorModesUpdate(UINT index, UINT modeCount, PMonitorMode modes)
     PCtlMonitorModes pMonitorModes = (PCtlMonitorModes)malloc(buflen);
     if (pMonitorModes == NULL)
     {
-        SetLastMsg("Failed MonitorModesUpdate CtlMonitorModes malloc\n");
+        SetLastMsg("MonitorModesUpdate 更新 CtlMonitorModes malloc 失败\n");
         if (g_printMsg)
         {
             printf(g_lastMsg);
@@ -579,7 +579,7 @@ BOOL MonitorModesUpdate(UINT index, UINT modeCount, PMonitorMode modes)
     {
         DWORD error = GetLastError();
         LPSTR errorString = formatErrorString(error);
-        SetLastMsg("Failed MonitorModesUpdate DeviceIoControl, error: 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("显示器模式更新设备控制失败，错误：0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -658,7 +658,7 @@ GetDevicePath(
         CM_GET_DEVICE_INTERFACE_LIST_ALL_DEVICES);
     if (cr != CR_SUCCESS)
     {
-        SetLastMsg("Failed GetDevicePath 0x%x, retrieving device interface list size.\n", cr);
+        SetLastMsg("GetDevicePath 0x%x 失败，检索设备接口列表大小。\n", cr);
         if (g_printMsg)
         {
             printf(g_lastMsg);
@@ -670,7 +670,7 @@ GetDevicePath(
     // CAUTION: BUG here. deviceInterfaceListLength is greater than 1, even device was not created...
     if (deviceInterfaceListLength <= 1)
     {
-        SetLastMsg("Error: GetDevicePath No active device interfaces found. Is the sample driver loaded?\n");
+        SetLastMsg("错误：GetDevicePath找不到活动设备接口。是否加载了示例驱动程序？\n");
         if (g_printMsg)
         {
             printf(g_lastMsg);
@@ -682,7 +682,7 @@ GetDevicePath(
     deviceInterfaceList = (PTSTR)malloc(deviceInterfaceListLength * sizeof(TCHAR));
     if (deviceInterfaceList == NULL)
     {
-        SetLastMsg("Error GetDevicePath allocating memory for device interface list.\n");
+        SetLastMsg("为设备接口列表分配内存时出错 GetDevicePath 。\n");
         if (g_printMsg)
         {
             printf(g_lastMsg);
@@ -703,14 +703,14 @@ GetDevicePath(
             CM_GET_DEVICE_INTERFACE_LIST_PRESENT);
         if (cr != CR_SUCCESS)
         {
-            SetLastMsg("Error GetDevicePath 0x%x retrieving device interface list.\n", cr);
+            SetLastMsg("检索设备接口列表时出错 GetDevicePath 0x%x 。\n", cr);
             if (g_printMsg)
             {
                 printf(g_lastMsg);
             }
             goto clean0;
         }
-        _tprintf(_T("get deviceInterfaceList %s\n"), deviceInterfaceList);
+        _tprintf(_T("获取设备接口列表 %s\n"), deviceInterfaceList);
         Sleep(1000);
     }
 
@@ -720,16 +720,16 @@ GetDevicePath(
 #else
     if (*nextInterface != ANSI_NULL) {
 #endif
-        printf("Warning: More than one device interface instance found. \n"
-            "Selecting first matching device.\n\n");
+        printf("警告：发现多个驱动接口实例。\n"
+            "选择第一个匹配驱动。\n\n");
     }
 
-    printf("begin copy device path\n");
+    printf("开始复制驱动路径\n");
     hr = StringCchCopy(DevicePath, BufLen, deviceInterfaceList);
     if (FAILED(hr))
     {
         LPSTR errorString = formatErrorString((DWORD)hr);
-        SetLastMsg("Failed GetDevicePath StringCchCopy, hresult 0x%lx, %s", hr, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("GetDevicePath StringCchCopy 失败，hresult 0x%lx, %s", hr, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -781,7 +781,7 @@ BOOLEAN GetDevicePath2(
     {
         DWORD error = GetLastError();
         LPSTR errorString = formatErrorString(error);
-        SetLastMsg("Failed GetDevicePath2 SetupDiGetClassDevs, error: 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("GetDevicePath2 SetupDiGetClassDevs 失败，错误：0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -803,7 +803,7 @@ BOOLEAN GetDevicePath2(
     {
         DWORD error = GetLastError();
         LPSTR errorString = formatErrorString(error);
-        SetLastMsg("Failed GetDevicePath2 SetupDiEnumDeviceInterfaces, error: 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("GetDevicePath2 SetupDiEnumDeviceInterfaces 失败，错误：0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -831,7 +831,7 @@ BOOLEAN GetDevicePath2(
     if (ERROR_INSUFFICIENT_BUFFER != error)
     {
         LPSTR errorString = formatErrorString(error);
-        SetLastMsg("GetDevicePath2 SetupDiGetDeviceInterfaceDetail failed, error: 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("GetDevicePath2 SetupDiGetDeviceInterfaceDetail 失败，错误：0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -859,7 +859,7 @@ BOOLEAN GetDevicePath2(
     {
         DWORD error = GetLastError();
         LPSTR errorString = formatErrorString(error);
-        SetLastMsg("Failed GetDevicePath2 HeapAlloc, error: 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("GetDevicePath2 HeapAlloc 失败，错误：0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -881,7 +881,7 @@ BOOLEAN GetDevicePath2(
     {
         DWORD error = GetLastError();
         LPSTR errorString = formatErrorString(error);
-        SetLastMsg("Failed GetDevicePath2 SetupDiGetDeviceInterfaceDetail, error: 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("GetDevicePath2 SetupDiGetDeviceInterfaceDetail 失败，错误：0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -897,7 +897,7 @@ BOOLEAN GetDevicePath2(
     if (FAILED(hr))
     {
         LPSTR errorString = formatErrorString((DWORD)hr);
-        SetLastMsg("Failed GetDevicePath2 StringCchCopy, hresult 0x%lx, %s", hr, errorString == NULL ? "(NULL)\n" : errorString);
+        SetLastMsg("GetDevicePath2 StringCchCopy 失败，hresult 0x%lx, %s", hr, errorString == NULL ? "(NULL)\n" : errorString);
         if (errorString != NULL)
         {
             LocalFree(errorString);
@@ -924,7 +924,7 @@ Clean0:
 // https://stackoverflow.com/questions/67164846/createfile-fails-unless-i-disable-enable-my-device
 HANDLE DeviceOpenHandle()
 {
-    SetLastMsg("Success");
+    SetLastMsg("成功");
 
     // const int maxDevPathLen = 256;
     TCHAR devicePath[256] = { 0 };
@@ -940,7 +940,7 @@ HANDLE DeviceOpenHandle()
         }
         if (_tcslen(devicePath) == 0)
         {
-            SetLastMsg("DeviceOpenHandle GetDevicePath got empty device path\n");
+            SetLastMsg("DeviceOpenHandle GetDevicePath 的驱动路径为空\n");
             if (g_printMsg)
             {
                 printf(g_lastMsg);
@@ -948,7 +948,7 @@ HANDLE DeviceOpenHandle()
             break;
         }
 
-        _tprintf(_T("Idd device: try open %s\n"), devicePath);
+        _tprintf(_T("IDD驱动：尝试打开 %s\n"), devicePath);
         hDevice = CreateFile(
             devicePath,
             GENERIC_READ | GENERIC_WRITE,
@@ -963,7 +963,7 @@ HANDLE DeviceOpenHandle()
         {
             DWORD error = GetLastError();
             LPSTR errorString = formatErrorString(error);
-            SetLastMsg("Failed DeviceOpenHandle CreateFile, error: 0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
+            SetLastMsg("DeviceOpenHandle CreateFile 失败，错误：0x%x, %s", error, errorString == NULL ? "(NULL)\n" : errorString);
             if (errorString != NULL)
             {
                 LocalFree(errorString);
