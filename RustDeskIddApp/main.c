@@ -1,3 +1,4 @@
+system("chcp 65001"); // 更改控制台为UTF-8编码
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
