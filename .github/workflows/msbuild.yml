@@ -11,9 +11,9 @@ on:
           default: "build_github_ci_test_sign"
 
 env:
-  Solution_Path: TianRenIddDriver.sln
-  Project_Driver: ./TianRenIddDriver/TianRenIddDriver.vcxproj
-  Project_App: ./TianRenIddApp/TianRenIddApp.vcxproj
+  Solution_Path: RustDeskIddDriver.sln
+  Project_Driver: ./RustDeskIddDriver/RustDeskIddDriver.vcxproj
+  Project_App: ./RustDeskIddApp/RustDeskIddApp.vcxproj
 
 jobs:
   build-windows-test-sign:
@@ -25,10 +25,10 @@ jobs:
           configuration: [Release]
           platform: [x64]
     env:
-      Dist_Dir: TianRenIddDriver_${{ matrix.platform }}
-      Dist_File: TianRenIddDriver_${{ matrix.platform }}.zip
-      Driver_Output_Dir: ./TianRenIddDriver/${{ matrix.platform }}/${{ matrix.configuration }}
-      App_Output_Dir: ./TianRenIddApp/${{ matrix.platform }}/${{ matrix.configuration }}
+      Dist_Dir: RustDeskIddDriver_${{ matrix.platform }}
+      Dist_File: RustDeskIddDriver_${{ matrix.platform }}.zip
+      Driver_Output_Dir: ./RustDeskIddDriver/${{ matrix.platform }}/${{ matrix.configuration }}
+      App_Output_Dir: ./RustDeskIddApp/${{ matrix.platform }}/${{ matrix.configuration }}
       Configuration: ${{ matrix.configuration }}
       Platform: ${{ matrix.platform }}
     steps:
@@ -59,7 +59,7 @@ jobs:
     #       certificate: '${{ secrets.WINDOWS_PFX_BASE64 }}'
     #       password: '${{ secrets.WINDOWS_PFX_PASSWORD }}'
     #       certificatesha1: '${{ secrets.WINDOWS_PFX_SHA1_THUMBPRINT }}'
-    #       folder: ./TianRenIddDriver/${{ matrix.platform }}/${{ matrix.configuration }}
+    #       folder: ./RustDeskIddDriver/${{ matrix.platform }}/${{ matrix.configuration }}
     #       recursive: false
 
       - name: Create dist dir
@@ -69,13 +69,13 @@ jobs:
       - name: Copy cert file if test sign
         if: inputs.sign-mode == 'Test Sign'
         run: |
-          mv ./${{ env.Driver_Output_Dir }}/TianRenIddDriver.cer ${{ env.Dist_Dir }}
+          mv ./${{ env.Driver_Output_Dir }}/RustDeskIddDriver.cer ${{ env.Dist_Dir }}
 
       - name: Zip files
         run: |
-          mv ./${{ env.Driver_Output_Dir }}/TianRenIddDriver ${{ env.Dist_Dir }}
-          mv ./${{ env.App_Output_Dir }}/TianRenIddApp.exe ${{ env.Dist_Dir }}
-          mv ./TianRenIddApp/README.md ${{ env.Dist_Dir }}
+          mv ./${{ env.Driver_Output_Dir }}/RustDeskIddDriver ${{ env.Dist_Dir }}
+          mv ./${{ env.App_Output_Dir }}/RustDeskIddApp.exe ${{ env.Dist_Dir }}
+          mv ./RustDeskIddApp/README.md ${{ env.Dist_Dir }}
 
           $vcruntime140 = vswhere -latest -requires Microsoft.Component.MSBuild -find VC\Tools\**\bin\HostX64\x64\vcruntime140.dll
           copy $vcruntime140[-1] ${{ env.dist_dir }}

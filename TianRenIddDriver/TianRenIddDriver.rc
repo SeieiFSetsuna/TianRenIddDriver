@@ -4,7 +4,7 @@
 #define VER_FILETYPE                VFT_DLL
 #define VER_FILESUBTYPE             VFT_UNKNOWN
 #define VER_FILEDESCRIPTION_STR     "UMDF Indirect Display Driver Sample"
-#define VER_INTERNALNAME_STR        "TianRenIddDriver"
-#define VER_ORIGINALFILENAME_STR    "TianRenIddDriver.dll"
+#define VER_INTERNALNAME_STR        "RustDeskIddDriver"
+#define VER_ORIGINALFILENAME_STR    "RustDeskIddDriver.dll"
 
 #include "common.ver"
