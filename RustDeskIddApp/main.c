@@ -28,15 +28,15 @@
 int prompt_input()
 {
     printf("Press  key                  execute:\n");
-    printf("       1. 'q'               1. quit\n");
-    printf("       2. 'c'               2. create software device with lifetime \"SWDeviceLifetimeHandle\"\n");
-    printf("       3. 'C'               3. create software device with lifetime \"SWDeviceLifetimeParentPresent\"\n");
-    printf("       4. 'd'               4. destroy software device\n");
-    printf("       5. 'i'               5. install or update driver\n");
-    printf("       6. 'u'               6. uninstall driver\n");
-    printf("       7. 'a'               7. plug in monitor\n");
-    printf("       8. 'b'               8. plug out monitor\n");
-    printf("       9. 'm'               9. update monitor modes\n");
+    printf("       1. 'q'               1. 退出\n");
+    printf("       2. 'c'               2. 创建具有生命周期\"SWDeviceLifetimeHandle\"的VD驱动\n");
+    printf("       3. 'C'               3. 创建具有生命周期\"SWDeviceLifetimeParentPresent\"的VD驱动\n");
+    printf("       4. 'd'               4. 销毁VD驱动\n");
+    printf("       5. 'i'               5. 安装或更新驱动程序\n");
+    printf("       6. 'u'               6. 卸载驱动程序\n");
+    printf("       7. 'a'               7. 插入显示器\n");
+    printf("       8. 'b'               8. 拔出显示器\n");
+    printf("       9. 'm'               9. 更新显示器模式\n");
 
     return _getch();
 }
@@ -67,18 +67,18 @@ int __cdecl main(int argc, char* argv[])
         switch (key)
         {
         case 'i':
-            printf("Install or update driver begin\n");
+            printf("开始安装或更新驱动程序\n");
             if (FALSE == InstallUpdate(infFullPath, &rebootRequired))
             {
                 printf(GetLastMsg());
             }
             else
             {
-                printf("Install or update driver done, reboot is %s required\n", (rebootRequired == TRUE ? "" : "not"));
+                printf("安装或更新驱动程序已完成，%s需要重新启动\n", (rebootRequired == TRUE ? "" : "不"));
             }
             break;
         case 'u':
-            printf("Uninstall driver begin\n");
+            printf("卸载驱动程序开始\n");
             if (FALSE == Uninstall(infFullPath, &rebootRequired))
             //if (FALSE == InstallUpdate(_T("D:\\projects\\windows\\IndirectDisplay\\x64\\Debug\\RustDeskIddDriver\\RustDeskIddDriver.inf"), &rebootRequired))
             {
@@ -86,16 +86,16 @@ int __cdecl main(int argc, char* argv[])
             }
             else
             {
-                printf("Uninstall driver done, reboot is %s required\n", (rebootRequired == TRUE ? "" : "not"));
+                printf("卸载驱动程序已完成，%s需要重新启动\n", (rebootRequired == TRUE ? "" : "不"));
             }
             break;
         case 'c':
         case 'C':
             lifetime = key == 'c' ? SWDeviceLifetimeHandle : SWDeviceLifetimeParentPresent;
-            printf("Create device begin\n");
+            printf("创建驱动开始\n");
             if (hSwDevice != NULL)
             {
-                printf("Device created before\n");
+                printf("之前创建的驱动\n");
                 break;
             }
             if (FALSE == DeviceCreateWithLifetime(&lifetime, &hSwDevice))
@@ -106,24 +106,24 @@ int __cdecl main(int argc, char* argv[])
             }
             else
             {
-                printf("Create device done\n");
+                printf("创建驱动完成\n");
             }
             break;
         case 'd':
-            printf("Close device begin\n");
+            printf("关闭驱动开始\n");
             DeviceClose(hSwDevice);
             hSwDevice = NULL;
-            printf("Close device done\n");
+            printf("关闭驱动完成\n");
             break;
         case 'a':
-            printf("Plug in monitor begin, current index %u\n", index);
+            printf("插入显示器开始，当前索引 %u\n", index);
             if (FALSE == MonitorPlugIn(index, 0, 25))
             {
                 printf(GetLastMsg());
             }
             else
             {
-                printf("Plug in monitor done\n");
+                printf("插入显示器完成\n");
 
                 MonitorMode modes[2] = { { 1920, 1080,  60 }, { 1024,  768,  60 }, };
                 if (FALSE == MonitorModesUpdate(index, sizeof(modes)/sizeof(modes[0]), modes))
@@ -136,11 +136,11 @@ int __cdecl main(int argc, char* argv[])
             break;
         case 'b':
             if (index == 0) {
-                printf("No virtual monitors\n");
+                printf("无虚拟显示器\n");
                 break;
             }
 
-            printf("Plug out monitor begin, current index %u\n", index - 1);
+            printf("拔出显示器开始，当前索引 %u\n", index - 1);
             if (FALSE == MonitorPlugOut(index - 1))
             {
                 printf(GetLastMsg());
@@ -148,20 +148,20 @@ int __cdecl main(int argc, char* argv[])
             else
             {
                 index -= 1;
-                printf("Plug out monitor done\n");
+                printf("拔出显示器完成\n");
             }
             break;
         case 'm':
-            printf("Update monitor modes, current max index %u\n", index - 1);
-            printf("Please select the monitor from 0 to %d\n", index - 1);
+            printf("更新显示器模式，当前最大索引 %u\n", index - 1);
+            printf("请从0到%d中选择显示器\n", index - 1);
             UINT i = 0;
             scanf_s("%d%*c", &i);
             if (i >= index) {
-                fprintf(stderr, "Please select index less equal to %d, your input is %d\n", index - 1, i);
+                fprintf(stderr, "请选择指数小于等于 %d，您的输入为 %d\n", index - 1, i);
             }
             else {
-                printf("\nYou have selected %d monitor to update modes.\n", i);
-                printf("Please add at lease one monitor mode, format: width, height, refresh frequency.\nThe max number of modes is %d.\nPress e to end input.\n", MAX_MONITOR_MODES);
+                printf("\n您已选择 %d显示器 来更新模式。\n", i);
+                printf("请至少添加一种显示器模式，格式：宽度、高度、刷新频率。\n最大模式数为 %d。\n按'e'结束输入。\n", MAX_MONITOR_MODES);
 
                 int input_ok = 0;
                 int k = 0;
@@ -178,7 +178,7 @@ int __cdecl main(int argc, char* argv[])
                         }
                     }
                     else {
-                        fprintf(stderr, "Something is wrong while tring to read the input. Please try again\n");
+                        fprintf(stderr, "尝试读取输入时出错。请重试\n");
                         break;
                     }
                     ++k;
@@ -190,7 +190,7 @@ int __cdecl main(int argc, char* argv[])
 
                 if (input_ok == 1) {
                     if (k == 0) {
-                        fprintf(stderr, "No monitor modes are added, skip.\n");
+                        fprintf(stderr, "未添加显示器模式，跳过。\n");
                     }
                     else {
                         if (FALSE == MonitorModesUpdate(i, k, modes))
