@@ -8,7 +8,7 @@
 #include <cfgmgr32.h>
 #include <combaseapi.h>
 
-#include "../RustDeskIddDriver/Public.h"
+#include "../TianRenIddDriver/Public.h"
 
 typedef struct DeviceCreateCallbackContext
 {
@@ -23,7 +23,7 @@ const GUID GUID_DEVINTERFACE_IDD_DRIVER_DEVICE = \
 
 BOOL g_printMsg = FALSE;
 char g_lastMsg[1024];
-const char* g_msgHeader = "RustDeskIdd: ";
+const char* g_msgHeader = "TianRenIdd: ";
 
 VOID WINAPI
 CreationCallback(
@@ -80,7 +80,7 @@ BOOL InstallUpdate(LPCTSTR fullInfPath, PBOOL rebootRequired)
     // UpdateDriverForPlugAndPlayDevices may return FALSE while driver was successfully installed...
     if (FALSE == UpdateDriverForPlugAndPlayDevices(
         NULL,
-        _T("RustDeskIddDriver"),    // match hardware id in the inf file
+        _T("TianRenIddDriver"),    // match hardware id in the inf file
         fullInfPath,
         INSTALLFLAG_FORCE
             // | INSTALLFLAG_NONINTERACTIVE  // INSTALLFLAG_NONINTERACTIVE may cause error 0xe0000247
@@ -266,12 +266,12 @@ BOOL DeviceCreateWithLifetime(SW_DEVICE_LIFETIME *lifetime, PHSWDEVICE hSwDevice
     DeviceCreateCallbackContext callbackContext = { hEvent, lifetime, E_FAIL, };
 
     SW_DEVICE_CREATE_INFO createInfo = { 0 };
-    PCWSTR description = L"RustDesk Idd Driver";
+    PCWSTR description = L"TianRen Idd Driver";
 
     // These match the Pnp id's in the inf file so OS will load the driver when the device is created    
-    PCWSTR instanceId = L"RustDeskIddDriver";
-    PCWSTR hardwareIds = L"RustDeskIddDriver\0\0";
-    PCWSTR compatibleIds = L"RustDeskIddDriver\0\0";
+    PCWSTR instanceId = L"TianRenIddDriver";
+    PCWSTR hardwareIds = L"TianRenIddDriver\0\0";
+    PCWSTR compatibleIds = L"TianRenIddDriver\0\0";
 
     createInfo.cbSize = sizeof(createInfo);
     createInfo.pszzCompatibleIds = compatibleIds;
@@ -284,7 +284,7 @@ BOOL DeviceCreateWithLifetime(SW_DEVICE_LIFETIME *lifetime, PHSWDEVICE hSwDevice
         SWDeviceCapabilitiesDriverRequired;
 
     // Create the device
-    HRESULT hr = SwDeviceCreate(L"RustDeskIddDriver",
+    HRESULT hr = SwDeviceCreate(L"TianRenIddDriver",
         L"HTREE\\ROOT\\0",
         &createInfo,
         0,

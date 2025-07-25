@@ -19,7 +19,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="RustDeskIddDriver.inf">
+    <Inf Include="TianRenIddDriver.inf">
       <Filter>Driver Files</Filter>
     </Inf>
   </ItemGroup>

@@ -57,7 +57,7 @@ int __cdecl main(int argc, char* argv[])
     TCHAR exePath[1024] = { 0, };
     (void)GetModuleFileName(NULL, exePath, sizeof(exePath)/sizeof(exePath[0]) - 1);
     *_tcsrchr(exePath, _T('\\')) = _T('\0');
-    PTCHAR infPath = _T("RustDeskIddDriver\\RustDeskIddDriver.inf");
+    PTCHAR infPath = _T("TianRenIddDriver\\TianRenIddDriver.inf");
     TCHAR infFullPath[1024] = { 0, };
     _sntprintf_s(infFullPath, sizeof(infFullPath) / sizeof(infFullPath[0]), _TRUNCATE, _T("%s\\%s"), exePath, infPath);
 
@@ -81,7 +81,7 @@ int __cdecl main(int argc, char* argv[])
         case 'u':
             printf("卸载驱动程序开始\n");
             if (FALSE == Uninstall(infFullPath, &rebootRequired))
-            //if (FALSE == InstallUpdate(_T("D:\\projects\\windows\\IndirectDisplay\\x64\\Debug\\RustDeskIddDriver\\RustDeskIddDriver.inf"), &rebootRequired))
+            //if (FALSE == InstallUpdate(_T("D:\\projects\\windows\\IndirectDisplay\\x64\\Debug\\TianRenIddDriver\\TianRenIddDriver.inf"), &rebootRequired))
             {
                 printf(GetLastMsg());
             }

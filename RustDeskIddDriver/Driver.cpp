@@ -24,10 +24,10 @@ Environment:
 #include "Public.h"
 
 //
-// Define an Interface Guid for RustDeskIddDriver device class.
+// Define an Interface Guid for TianRenIddDriver device class.
 // This GUID is used to register (IoRegisterDeviceInterface)
 // an instance of an interface so that user application
-// can control the RustDeskIddDriver device.
+// can control the TianRenIddDriver device.
 //
 const GUID GUID_DEVINTERFACE_IDD_DRIVER_DEVICE = \
     { 0x781EF630, 0x72B2, 0x11d2, { 0xB8, 0x52,  0x00,  0xC0,  0x4E,  0xAF,  0x52,  0x72 } };
@@ -141,22 +141,22 @@ static IDDCX_TARGET_MODE CreateIddCxTargetMode(DWORD Width, DWORD Height, DWORD 
 
 extern "C" DRIVER_INITIALIZE DriverEntry;
 
-EVT_WDF_DRIVER_UNLOAD RustDeskIddDriverUnload;
-EVT_WDF_DRIVER_DEVICE_ADD IddRustDeskDeviceAdd;
-EVT_WDF_DEVICE_D0_ENTRY IddRustDeskDeviceD0Entry;
+EVT_WDF_DRIVER_UNLOAD TianRenIddDriverUnload;
+EVT_WDF_DRIVER_DEVICE_ADD IddTianRenDeviceAdd;
+EVT_WDF_DEVICE_D0_ENTRY IddTianRenDeviceD0Entry;
 
 // https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/defining-i-o-control-codes
-EVT_IDD_CX_DEVICE_IO_CONTROL IddRustDeskIoDeviceControl;
+EVT_IDD_CX_DEVICE_IO_CONTROL IddTianRenIoDeviceControl;
 
-EVT_IDD_CX_ADAPTER_INIT_FINISHED IddRustDeskAdapterInitFinished;
-EVT_IDD_CX_ADAPTER_COMMIT_MODES IddRustDeskAdapterCommitModes;
+EVT_IDD_CX_ADAPTER_INIT_FINISHED IddTianRenAdapterInitFinished;
+EVT_IDD_CX_ADAPTER_COMMIT_MODES IddTianRenAdapterCommitModes;
 
-EVT_IDD_CX_PARSE_MONITOR_DESCRIPTION IddRustDeskParseMonitorDescription;
-EVT_IDD_CX_MONITOR_GET_DEFAULT_DESCRIPTION_MODES IddRustDeskMonitorGetDefaultModes;
-EVT_IDD_CX_MONITOR_QUERY_TARGET_MODES IddRustDeskMonitorQueryModes;
+EVT_IDD_CX_PARSE_MONITOR_DESCRIPTION IddTianRenParseMonitorDescription;
+EVT_IDD_CX_MONITOR_GET_DEFAULT_DESCRIPTION_MODES IddTianRenMonitorGetDefaultModes;
+EVT_IDD_CX_MONITOR_QUERY_TARGET_MODES IddTianRenMonitorQueryModes;
 
-EVT_IDD_CX_MONITOR_ASSIGN_SWAPCHAIN IddRustDeskMonitorAssignSwapChain;
-EVT_IDD_CX_MONITOR_UNASSIGN_SWAPCHAIN IddRustDeskMonitorUnassignSwapChain;
+EVT_IDD_CX_MONITOR_ASSIGN_SWAPCHAIN IddTianRenMonitorAssignSwapChain;
+EVT_IDD_CX_MONITOR_UNASSIGN_SWAPCHAIN IddTianRenMonitorUnassignSwapChain;
 
 struct IndirectDeviceContextWrapper
 {
@@ -212,9 +212,9 @@ extern "C" NTSTATUS DriverEntry(
     WPP_INIT_TRACING(pDriverObject, pRegistryPath);
 
     WDF_DRIVER_CONFIG_INIT(&Config,
-        IddRustDeskDeviceAdd
+        IddTianRenDeviceAdd
     );
-    Config.EvtDriverUnload = RustDeskIddDriverUnload;
+    Config.EvtDriverUnload = TianRenIddDriverUnload;
 
     // The WdfDriverCreate method creates a framework driver object for the calling driver.
     Status = WdfDriverCreate(pDriverObject, pRegistryPath, &Attributes, &Config, WDF_NO_HANDLE);
@@ -238,7 +238,7 @@ extern "C" NTSTATUS DriverEntry(
 }
 
 _Use_decl_annotations_
-void RustDeskIddDriverUnload(_In_ WDFDRIVER /*Driver*/)
+void TianRenIddDriverUnload(_In_ WDFDRIVER /*Driver*/)
 {
     WPP_CLEANUP(WdfDriverWdmGetDriverObject(Driver));
 }
@@ -251,7 +251,7 @@ void RustDeskIddDriverUnload(_In_ WDFDRIVER /*Driver*/)
 // so you don't need to use WdfIoQueueCreate to create a queue to receive I / O queue message.
 // After all of the above, you should create IOCTL code, this can establish communication between applicationand idd device.
 _Use_decl_annotations_
-NTSTATUS IddRustDeskDeviceAdd(WDFDRIVER Driver, PWDFDEVICE_INIT pDeviceInit)
+NTSTATUS IddTianRenDeviceAdd(WDFDRIVER Driver, PWDFDEVICE_INIT pDeviceInit)
 {
     NTSTATUS Status = STATUS_SUCCESS;
     WDF_PNPPOWER_EVENT_CALLBACKS PnpPowerCallbacks;
@@ -260,7 +260,7 @@ NTSTATUS IddRustDeskDeviceAdd(WDFDRIVER Driver, PWDFDEVICE_INIT pDeviceInit)
 
     // Register for power callbacks - in this sample only power-on is needed
     WDF_PNPPOWER_EVENT_CALLBACKS_INIT(&PnpPowerCallbacks);
-    PnpPowerCallbacks.EvtDeviceD0Entry = IddRustDeskDeviceD0Entry;
+    PnpPowerCallbacks.EvtDeviceD0Entry = IddTianRenDeviceD0Entry;
     WdfDeviceInitSetPnpPowerEventCallbacks(pDeviceInit, &PnpPowerCallbacks);
 
     IDD_CX_CLIENT_CONFIG IddConfig;
@@ -269,16 +269,16 @@ NTSTATUS IddRustDeskDeviceAdd(WDFDRIVER Driver, PWDFDEVICE_INIT pDeviceInit)
     // If the driver wishes to handle custom IoDeviceControl requests, it's necessary to use this callback since IddCx
     // redirects IoDeviceControl requests to an internal queue. This sample does not need this.
     // https://docs.microsoft.com/en-us/windows-hardware/drivers/display/iddcx-objects
-    IddConfig.EvtIddCxDeviceIoControl = IddRustDeskIoDeviceControl;
+    IddConfig.EvtIddCxDeviceIoControl = IddTianRenIoDeviceControl;
 
-    IddConfig.EvtIddCxAdapterInitFinished = IddRustDeskAdapterInitFinished;
+    IddConfig.EvtIddCxAdapterInitFinished = IddTianRenAdapterInitFinished;
 
-    IddConfig.EvtIddCxParseMonitorDescription = IddRustDeskParseMonitorDescription;
-    IddConfig.EvtIddCxMonitorGetDefaultDescriptionModes = IddRustDeskMonitorGetDefaultModes;
-    IddConfig.EvtIddCxMonitorQueryTargetModes = IddRustDeskMonitorQueryModes;
-    IddConfig.EvtIddCxAdapterCommitModes = IddRustDeskAdapterCommitModes;
-    IddConfig.EvtIddCxMonitorAssignSwapChain = IddRustDeskMonitorAssignSwapChain;
-    IddConfig.EvtIddCxMonitorUnassignSwapChain = IddRustDeskMonitorUnassignSwapChain;
+    IddConfig.EvtIddCxParseMonitorDescription = IddTianRenParseMonitorDescription;
+    IddConfig.EvtIddCxMonitorGetDefaultDescriptionModes = IddTianRenMonitorGetDefaultModes;
+    IddConfig.EvtIddCxMonitorQueryTargetModes = IddTianRenMonitorQueryModes;
+    IddConfig.EvtIddCxAdapterCommitModes = IddTianRenAdapterCommitModes;
+    IddConfig.EvtIddCxMonitorAssignSwapChain = IddTianRenMonitorAssignSwapChain;
+    IddConfig.EvtIddCxMonitorUnassignSwapChain = IddTianRenMonitorUnassignSwapChain;
 
     Status = IddCxDeviceInitConfig(pDeviceInit, &IddConfig);
     if (!NT_SUCCESS(Status))
@@ -351,7 +351,7 @@ NTSTATUS IddRustDeskDeviceAdd(WDFDRIVER Driver, PWDFDEVICE_INIT pDeviceInit)
 }
 
 _Use_decl_annotations_
-NTSTATUS IddRustDeskDeviceD0Entry(WDFDEVICE Device, WDF_POWER_DEVICE_STATE PreviousState)
+NTSTATUS IddTianRenDeviceD0Entry(WDFDEVICE Device, WDF_POWER_DEVICE_STATE PreviousState)
 {
     UNREFERENCED_PARAMETER(PreviousState);
 
@@ -651,9 +651,9 @@ void IndirectDeviceContext::InitAdapter()
     AdapterCaps.EndPointDiagnostics.TransmissionType = IDDCX_TRANSMISSION_TYPE_WIRED_OTHER;
 
     // Declare your device strings for telemetry (required)
-    AdapterCaps.EndPointDiagnostics.pEndPointFriendlyName = L"RustDesk Idd Device";
-    AdapterCaps.EndPointDiagnostics.pEndPointManufacturerName = L"RustDesk";
-    AdapterCaps.EndPointDiagnostics.pEndPointModelName = L"RustDesk Idd Model";
+    AdapterCaps.EndPointDiagnostics.pEndPointFriendlyName = L"TianRen Idd Device";
+    AdapterCaps.EndPointDiagnostics.pEndPointManufacturerName = L"TianRen";
+    AdapterCaps.EndPointDiagnostics.pEndPointModelName = L"TianRen Idd Model";
 
     // Declare your hardware and firmware versions (required)
     IDDCX_ENDPOINT_VERSION Version = {};
@@ -1052,7 +1052,7 @@ void IndirectMonitorContext::UnassignSwapChain()
 
 _Use_decl_annotations_
 VOID
-IddRustDeskIoDeviceControl(WDFDEVICE Device, WDFREQUEST Request, size_t OutputBufferLength, size_t InputBufferLength, ULONG IoControlCode)
+IddTianRenIoDeviceControl(WDFDEVICE Device, WDFREQUEST Request, size_t OutputBufferLength, size_t InputBufferLength, ULONG IoControlCode)
 {
     TraceEvents(TRACE_LEVEL_INFORMATION,
         TRACE_DEVICE,
@@ -1132,7 +1132,7 @@ IddRustDeskIoDeviceControl(WDFDEVICE Device, WDFREQUEST Request, size_t OutputBu
 
 // TODO: This function may not be called, why?
 _Use_decl_annotations_
-NTSTATUS IddRustDeskAdapterInitFinished(IDDCX_ADAPTER AdapterObject, const IDARG_IN_ADAPTER_INIT_FINISHED* pInArgs)
+NTSTATUS IddTianRenAdapterInitFinished(IDDCX_ADAPTER AdapterObject, const IDARG_IN_ADAPTER_INIT_FINISHED* pInArgs)
 {
     TraceEvents(TRACE_LEVEL_VERBOSE, TRACE_DEVICE, "%!FUNC! called");
 
@@ -1165,7 +1165,7 @@ NTSTATUS IddRustDeskAdapterInitFinished(IDDCX_ADAPTER AdapterObject, const IDARG
 }
 
 _Use_decl_annotations_
-NTSTATUS IddRustDeskAdapterCommitModes(IDDCX_ADAPTER AdapterObject, const IDARG_IN_COMMITMODES* pInArgs)
+NTSTATUS IddTianRenAdapterCommitModes(IDDCX_ADAPTER AdapterObject, const IDARG_IN_COMMITMODES* pInArgs)
 {
     TraceEvents(TRACE_LEVEL_VERBOSE, TRACE_DEVICE, "%!FUNC! called");
 
@@ -1184,7 +1184,7 @@ NTSTATUS IddRustDeskAdapterCommitModes(IDDCX_ADAPTER AdapterObject, const IDARG_
 }
 
 _Use_decl_annotations_
-NTSTATUS IddRustDeskParseMonitorDescription(const IDARG_IN_PARSEMONITORDESCRIPTION* pInArgs, IDARG_OUT_PARSEMONITORDESCRIPTION* pOutArgs)
+NTSTATUS IddTianRenParseMonitorDescription(const IDARG_IN_PARSEMONITORDESCRIPTION* pInArgs, IDARG_OUT_PARSEMONITORDESCRIPTION* pOutArgs)
 {
     TraceEvents(TRACE_LEVEL_VERBOSE, TRACE_DEVICE, "%!FUNC! called");
 
@@ -1241,7 +1241,7 @@ NTSTATUS IddRustDeskParseMonitorDescription(const IDARG_IN_PARSEMONITORDESCRIPTI
 }
 
 _Use_decl_annotations_
-NTSTATUS IddRustDeskMonitorGetDefaultModes(IDDCX_MONITOR MonitorObject, const IDARG_IN_GETDEFAULTDESCRIPTIONMODES* pInArgs, IDARG_OUT_GETDEFAULTDESCRIPTIONMODES* pOutArgs)
+NTSTATUS IddTianRenMonitorGetDefaultModes(IDDCX_MONITOR MonitorObject, const IDARG_IN_GETDEFAULTDESCRIPTIONMODES* pInArgs, IDARG_OUT_GETDEFAULTDESCRIPTIONMODES* pOutArgs)
 {
     TraceEvents(TRACE_LEVEL_VERBOSE, TRACE_DEVICE, "%!FUNC! called");
 
@@ -1280,7 +1280,7 @@ NTSTATUS IddRustDeskMonitorGetDefaultModes(IDDCX_MONITOR MonitorObject, const ID
 // more query modes
 // https://github.com/roshkins/IddSampleDriver/blob/df7238c1f242e1093cdcab0ea749f34094570283/IddSampleDriver/Driver.cpp#L699
 _Use_decl_annotations_
-NTSTATUS IddRustDeskMonitorQueryModes(IDDCX_MONITOR MonitorObject, const IDARG_IN_QUERYTARGETMODES* pInArgs, IDARG_OUT_QUERYTARGETMODES* pOutArgs)
+NTSTATUS IddTianRenMonitorQueryModes(IDDCX_MONITOR MonitorObject, const IDARG_IN_QUERYTARGETMODES* pInArgs, IDARG_OUT_QUERYTARGETMODES* pOutArgs)
 {
     TraceEvents(TRACE_LEVEL_VERBOSE, TRACE_DEVICE, "%!FUNC! called");
 
@@ -1314,7 +1314,7 @@ NTSTATUS IddRustDeskMonitorQueryModes(IDDCX_MONITOR MonitorObject, const IDARG_I
 }
 
 _Use_decl_annotations_
-NTSTATUS IddRustDeskMonitorAssignSwapChain(IDDCX_MONITOR MonitorObject, const IDARG_IN_SETSWAPCHAIN* pInArgs)
+NTSTATUS IddTianRenMonitorAssignSwapChain(IDDCX_MONITOR MonitorObject, const IDARG_IN_SETSWAPCHAIN* pInArgs)
 {
     TraceEvents(TRACE_LEVEL_RESERVED7, TRACE_DEVICE, "%!FUNC! called");
 
@@ -1324,7 +1324,7 @@ NTSTATUS IddRustDeskMonitorAssignSwapChain(IDDCX_MONITOR MonitorObject, const ID
 }
 
 _Use_decl_annotations_
-NTSTATUS IddRustDeskMonitorUnassignSwapChain(IDDCX_MONITOR MonitorObject)
+NTSTATUS IddTianRenMonitorUnassignSwapChain(IDDCX_MONITOR MonitorObject)
 {
     TraceEvents(TRACE_LEVEL_VERBOSE, TRACE_DEVICE, "%!FUNC! called");
 

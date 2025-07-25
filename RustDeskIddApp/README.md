@@ -1,4 +1,4 @@
-# RustDeskIddDriver
+# TianRenIddDriver
 
 This is a sample based on [Indirect Display Driver Sample](https://github.com/microsoft/Windows-driver-samples/tree/master/video/IndirectDisplay).
 
@@ -8,15 +8,15 @@ Win10 or later
 
 ## Steps
 
-1. Double click "RustDeskIddDriver.cer" to install cert.
-2. Run "RustDeskIddApp.exe" as administrator.  
+1. Double click "TianRenIddDriver.cer" to install cert.
+2. Run "TianRenIddApp.exe" as administrator.  
     Press "c" to create device. If you get 0xe0000247 error code. You should follow step 3.
     Press "i" to install. If you get 0xe0000247 error code. You should follow step 3.
 3. Disable Driver Signature Verification.
 
 ## Demo
 
-If all are going right, you can see RustDeskIddDriver in your device manager.
+If all are going right, you can see TianRenIddDriver in your device manager.
 
 ## View logs
 

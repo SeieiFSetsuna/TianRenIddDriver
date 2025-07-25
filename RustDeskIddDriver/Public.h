@@ -51,5 +51,5 @@ typedef struct _CtlMonitorModes {
 } CtlMonitorModes, *PCtlMonitorModes;
 
 
-#define SYMBOLIC_LINK_NAME L"\\Device\\RustDeskIddDriver"
+#define SYMBOLIC_LINK_NAME L"\\Device\\TianRenIddDriver"
 
