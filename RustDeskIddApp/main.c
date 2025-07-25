@@ -27,7 +27,7 @@
 
 int prompt_input()
 {
-    printf("Press  key                  execute:\n");
+    printf("按键                  执行：\n");
     printf("       1. 'q'               1. 退出\n");
     printf("       2. 'c'               2. 创建具有生命周期\"SWDeviceLifetimeHandle\"的VD驱动\n");
     printf("       3. 'C'               3. 创建具有生命周期\"SWDeviceLifetimeParentPresent\"的VD驱动\n");
